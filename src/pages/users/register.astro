@@ -1,0 +1,39 @@
+---
+import {db} from "../../config/db"
+import Layout from "../../layouts/Main.astro"
+import { users } from "../../lib/schema"
+import * as bcrypt from "bcrypt"
+
+if (Astro.request.method === "POST") {
+    const form = await Astro.request.formData()
+    let data = Object.fromEntries(form.entries())
+
+    const password = bcrypt.hashSync(data.password, 10)
+    data = {...data, password}
+
+    await db.insert(users).values({
+        id: Date.now(),
+        emailAddress: data.emailAddress,
+        password: data.password
+    }).execute()
+    return Astro.redirect("/users", 302)
+}
+---
+
+<Layout title="register">
+<form method="post">
+    <div class="field">
+        <label for="emailAddress" class="label">Email Address</label>
+        <div class="control">
+            <input class="input" type="email" name="emailAddress" id="emailAddress" required >
+        </div>
+    </div>
+    <div class="field">
+    <label class="label" for="password">Password</label>
+    <div class="control">
+    <input class="input" type="password" name="password" id="password" required >
+    </div>
+</div>
+<button class="button is-primary">Register</button>
+</form>
+</Layout>   

@@ -1,0 +1,18 @@
+---
+const { name } = Astro.params
+
+const products = ["keyboard"]
+
+const product = products.find(p => p === name)
+
+
+export async function getStaticPaths() {
+  return [
+    { params: {name: "keyboard"}},
+  ];
+}
+
+console.log(name)
+---
+
+<h1>{product}</h1>
